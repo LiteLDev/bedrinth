@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
 import { ArrowLeft, Star, Clock, Tag, Box, Github } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar } from "@/components/avatar";
 import { InstallCommands } from "@/components/install-commands";
+import { Markdown } from "@/components/markdown";
 import {
   fetchPackageIndex,
   getPackageManifestUrl,
   getReadmeUrl,
+  getRepoBaseUrls,
   REVALIDATE_SECONDS,
 } from "@/lib/packages";
 
@@ -174,6 +175,7 @@ export default async function PackageDetailPage({
 
   const manifest = await getManifest(tooth, selectedVersion);
   const readme = await getReadme(tooth, selectedVersion);
+  const repoUrls = getRepoBaseUrls(tooth, selectedVersion);
   const info = manifest?.info || pkg.info;
 
   return (
@@ -216,9 +218,9 @@ export default async function PackageDetailPage({
             <CardContent className="p-6 md:p-8">
               {readme ? (
                 <div className="prose dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-pre:bg-gray-100 prose-pre:text-gray-800 dark:prose-pre:bg-gray-900 dark:prose-pre:text-gray-200 prose-code:bg-gray-100 prose-code:text-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm dark:prose-code:bg-gray-900 dark:prose-code:text-gray-200 prose-table:border-collapse prose-th:border prose-td:border prose-th:p-2 prose-td:p-2 prose-img:inline-block prose-img:my-1 prose-img:mr-1 prose-p:my-4">
-                  <ReactMarkdown>
+                  <Markdown rawBase={repoUrls.raw} blobBase={repoUrls.blob}>
                     {readme}
-                  </ReactMarkdown>
+                  </Markdown>
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-500">

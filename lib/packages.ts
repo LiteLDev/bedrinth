@@ -218,10 +218,29 @@ export function getPackageManifestUrl(tooth: string, version: string): string {
   return `${PACKAGE_REGISTRY_URL}/${tooth}@${version}/tooth.json`;
 }
 
-export function getReadmeUrl(tooth: string, version: string): string | null {
+export interface RepoBaseUrls {
+  /** Raw file contents, e.g. `https://raw.githubusercontent.com/o/r/v1.0.0/`. */
+  raw: string;
+  /** Browsable files, e.g. `https://github.com/o/r/blob/v1.0.0/`. */
+  blob: string;
+}
+
+/** Top-level bases for the repository a tooth was published from. */
+export function getRepoBaseUrls(tooth: string, version: string): RepoBaseUrls {
   const tag = `v${version}`;
   if (tooth.startsWith("github.com/")) {
-    return `https://raw.githubusercontent.com/${tooth.slice("github.com/".length)}/${tag}/README.md`;
+    const repo = tooth.slice("github.com/".length);
+    return {
+      raw: `https://raw.githubusercontent.com/${repo}/${tag}/`,
+      blob: `https://github.com/${repo}/blob/${tag}/`,
+    };
   }
-  return `https://${tooth}/raw/refs/tags/${tag}/README.md`;
+  return {
+    raw: `https://${tooth}/raw/refs/tags/${tag}/`,
+    blob: `https://${tooth}/blob/refs/tags/${tag}/`,
+  };
+}
+
+export function getReadmeUrl(tooth: string, version: string): string | null {
+  return `${getRepoBaseUrls(tooth, version).raw}README.md`;
 }

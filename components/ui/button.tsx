@@ -68,7 +68,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       const child = React.Children.only(
         props.children,
       ) as React.ReactElement<React.HTMLAttributes<HTMLElement>>;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { children, ...restProps } = props;
       // eslint-disable-next-line react-hooks/refs
       return React.cloneElement(child, {
